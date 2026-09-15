@@ -1,0 +1,213 @@
+// Uzunov 90 — pet shop data model
+// Default provider is SQLite for zero-config local/VPS hosting.
+// To move to Postgres: change provider to "postgresql" and point DATABASE_URL at it.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("admin") // admin | editor
+  createdAt    DateTime @default(now())
+  lastLoginAt  DateTime?
+}
+
+model Category {
+  id          String     @id @default(cuid())
+  slug        String     @unique
+  name        String
+  description String?
+  image       String?
+  icon        String?
+  position    Int        @default(0)
+  isActive    Boolean    @default(true)
+  showInMenu  Boolean    @default(true)
+
+  parentId String?
+  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children Category[] @relation("CategoryTree")
+
+  products Product[]
+
+  seoTitle       String?
+  seoDescription String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([parentId])
+  @@index([slug])
+}
+
+model Brand {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  logo        String?
+  description String?
+  products    Product[]
+  createdAt   DateTime  @default(now())
+}
+
+model Product {
+  id               String  @id @default(cuid())
+  slug             String  @unique
+  sku              String? @unique
+  name             String
+  shortDescription String?
+  description      String?
+
+  // Price in EUR. Bulgaria switched to the euro on 01.01.2026 — the UI shows
+  // EUR as the primary price with the BGN equivalent alongside it.
+  price    Float
+  oldPrice Float?
+
+  stock      Int     @default(0)
+  trackStock Boolean @default(true)
+  unit       String  @default("бр.") // бр. / кг / л
+  weight     Float? // kg, used for shipping rules
+
+  // JSON-encoded string[] of image paths — SQLite has no native JSON column.
+  images String @default("[]")
+  // JSON-encoded { label, price, sku, stock }[] for size/weight options.
+  variants String @default("[]")
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  brandId String?
+  brand   Brand?  @relation(fields: [brandId], references: [id], onDelete: SetNull)
+
+  isActive   Boolean @default(true)
+  isFeatured Boolean @default(false)
+  isNew      Boolean @default(false)
+
+  ratingAvg   Float @default(0)
+  ratingCount Int   @default(0)
+  viewCount   Int   @default(0)
+  soldCount   Int   @default(0)
+
+  seoTitle       String?
+  seoDescription String?
+
+  // Original product id on the legacy uzunov90.com site — keeps the importer idempotent.
+  legacyId String? @unique
+
+  reviews    Review[]
+  orderItems OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([categoryId])
+  @@index([brandId])
+  @@index([isActive, isFeatured])
+  @@index([name])
+}
+
+model Order {
+  id     String @id @default(cuid())
+  number String @unique // human-readable, e.g. UZ-2026-0001
+
+  // new | confirmed | shipped | delivered | cancelled
+  status String @default("new")
+
+  customerName String
+  email        String
+  phone        String
+  city         String
+  address      String
+  postcode     String?
+  note         String?
+
+  // speedy_office | speedy_address | pickup
+  deliveryMethod String @default("speedy_office")
+  // cod | bank_transfer
+  paymentMethod String @default("cod")
+
+  subtotal Float
+  shipping Float @default(0)
+  total    Float
+
+  adminNote String?
+
+  items OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  // Denormalised so an order stays readable after a product is edited or removed.
+  name     String
+  variant  String?
+  price    Float
+  quantity Int
+  image    String?
+
+  @@index([orderId])
+}
+
+model Review {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  authorName String
+  email      String?
+  rating     Int
+  title      String?
+  body       String
+
+  // pending | approved | rejected
+  status String @default("pending")
+
+  createdAt DateTime @default(now())
+
+  @@index([productId, status])
+  @@index([status])
+}
+
+model ContactMessage {
+  id      String  @id @default(cuid())
+  name    String
+  email   String
+  phone   String?
+  subject String?
+  body    String
+  isRead  Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([isRead])
+}
+
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+model Setting {
+  key   String @id
+  value String
+}

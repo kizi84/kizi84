@@ -1,0 +1,173 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------
+   Uzunov 90 design system
+   Warm pine green + leather amber on cream — a palette that nods to
+   the shop's natural-leather heritage instead of the usual pet-shop orange.
+   --------------------------------------------------------------- */
+@theme {
+  --color-ink-50: #f5f7f6;
+  --color-ink-100: #e6ebe9;
+  --color-ink-200: #cbd6d2;
+  --color-ink-300: #a3b5af;
+  --color-ink-400: #74908a;
+  --color-ink-500: #55736d;
+  --color-ink-600: #425b57;
+  --color-ink-700: #384a47;
+  --color-ink-800: #1f302c;
+  --color-ink-900: #14211e;
+
+  --color-brand-50: #eefaf5;
+  --color-brand-100: #d5f2e6;
+  --color-brand-200: #aee4d0;
+  --color-brand-300: #7bcfb3;
+  --color-brand-400: #47b393;
+  --color-brand-500: #26977a;
+  --color-brand-600: #1d6f5c;
+  --color-brand-700: #19594b;
+  --color-brand-800: #16473e;
+  --color-brand-900: #133b34;
+
+  --color-amber-brand-50: #fdf7ed;
+  --color-amber-brand-100: #f9ebcf;
+  --color-amber-brand-200: #f2d49f;
+  --color-amber-brand-300: #ebb968;
+  --color-amber-brand-400: #e8a33d;
+  --color-amber-brand-500: #d98420;
+  --color-amber-brand-600: #b96518;
+  --color-amber-brand-700: #954b18;
+
+  --color-cream: #faf7f2;
+  --color-cream-dark: #f2ece2;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-manrope), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-xl2: 1.25rem;
+
+  --shadow-soft: 0 1px 2px rgba(20, 33, 30, 0.04), 0 8px 24px -8px rgba(20, 33, 30, 0.10);
+  --shadow-lift: 0 2px 4px rgba(20, 33, 30, 0.05), 0 20px 40px -12px rgba(20, 33, 30, 0.18);
+
+  --animate-marquee: marquee 32s linear infinite;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink-900);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background-color: var(--color-brand-200);
+    color: var(--color-brand-900);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Respect people who ask the OS for less motion. */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .container-page {
+    width: 100%;
+    margin-inline: auto;
+    max-width: 80rem;
+    padding-inline: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .container-page { padding-inline: 1.5rem; }
+  }
+
+  @media (min-width: 1024px) {
+    .container-page { padding-inline: 2rem; }
+  }
+
+  /* Reveal-on-scroll, driven by IntersectionObserver in <Reveal /> */
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Reduced motion users get the content without the travel. */
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .card-hover {
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.35s ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lift);
+  }
+
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1.5px;
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    transition: background-size 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .link-underline:hover { background-size: 100% 1.5px; }
+
+  .skeleton {
+    background: linear-gradient(90deg, var(--color-cream-dark) 25%, #fff 50%, var(--color-cream-dark) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+  }
+
+  @keyframes shimmer {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+  }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
