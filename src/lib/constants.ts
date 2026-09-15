@@ -42,6 +42,16 @@ export const SHIPPING = {
   addressRate: 5.0,
 } as const;
 
+/** Catalogue sort order — shared by the server query and the client filter bar. */
+export const SORT_OPTIONS = [
+  { value: "popular", label: "Най-популярни" },
+  { value: "new", label: "Най-нови" },
+  { value: "price-asc", label: "Цена: ниска → висока" },
+  { value: "price-desc", label: "Цена: висока → ниска" },
+  { value: "rating", label: "Най-високо оценени" },
+  { value: "name", label: "Име (А–Я)" },
+] as const;
+
 export const ORDER_STATUSES = [
   { value: "new", label: "Нова", color: "bg-blue-100 text-blue-700" },
   { value: "confirmed", label: "Потвърдена", color: "bg-amber-100 text-amber-700" },

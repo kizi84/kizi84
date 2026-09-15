@@ -6,6 +6,16 @@ import { Check, Minus, Plus, ShoppingBag } from "lucide-react";
 import { useCart } from "@/components/CartProvider";
 import { cn, formatPrice, type Variant } from "@/lib/utils";
 
+/** Names the choice from the labels themselves — weights, sizes or flavours. */
+function labelForVariants(variants: Variant[]): string {
+  const labels = variants.map((v) => v.label);
+  if (labels.some((l) => /^Размер|^\d+[.,]?\d*\s?(см|м)$|см\)|^(XS|S|M|L|XL)$/i.test(l))) {
+    return "Изберете размер:";
+  }
+  if (labels.every((l) => /\d/.test(l))) return "Изберете разфасовка:";
+  return "Изберете вкус:";
+}
+
 export function AddToCartPanel({
   product,
   variants,
@@ -40,6 +50,7 @@ export function AddToCartPanel({
   const [added, setAdded] = useState(false);
 
   const selected = variants[variantIndex];
+  const variantWord = labelForVariants(variants);
   const price = selected?.price ?? product.price;
   const stock = selected?.stock ?? product.stock;
   const inStock = !product.trackStock || stock > 0;
@@ -81,24 +92,47 @@ export function AddToCartPanel({
 
       {variants.length > 0 && (
         <fieldset className="mt-5">
-          <legend className="text-sm font-bold text-ink-900">Изберете вариант</legend>
-          <div className="mt-2.5 flex flex-wrap gap-2">
-            {variants.map((variant, index) => (
-              <button
-                key={variant.label}
-                type="button"
-                onClick={() => setVariantIndex(index)}
-                aria-pressed={index === variantIndex}
-                className={cn(
-                  "rounded-full border px-4 py-2 text-sm font-medium transition-colors",
-                  index === variantIndex
-                    ? "border-brand-600 bg-brand-600 text-white"
-                    : "border-ink-200 bg-white text-ink-700 hover:border-brand-300",
-                )}
-              >
-                {variant.label}
-              </button>
-            ))}
+          <legend className="text-sm font-bold text-ink-900">
+            {variantWord}
+            {selected && <span className="ml-1.5 font-normal text-ink-400">{selected.label}</span>}
+          </legend>
+          {/* auto-fit keeps long size labels on one line and still stacks on a phone */}
+          <div
+            className="mt-2.5 grid gap-2"
+            style={{ gridTemplateColumns: "repeat(auto-fit, minmax(8.5rem, 1fr))" }}
+          >
+            {variants.map((variant, index) => {
+              const variantStock = variant.stock ?? product.stock;
+              const soldOut = product.trackStock && variantStock <= 0;
+              const variantPrice = variant.price ?? product.price;
+
+              return (
+                <button
+                  key={variant.label}
+                  type="button"
+                  onClick={() => setVariantIndex(index)}
+                  disabled={soldOut}
+                  aria-pressed={index === variantIndex}
+                  className={cn(
+                    "rounded-xl border px-3 py-2.5 text-left transition-colors",
+                    index === variantIndex
+                      ? "border-brand-600 bg-brand-600 text-white"
+                      : "border-ink-200 bg-white text-ink-700 hover:border-brand-300",
+                    soldOut && "cursor-not-allowed border-ink-100 bg-ink-50 text-ink-300 hover:border-ink-100",
+                  )}
+                >
+                  <span className="block text-sm leading-tight font-semibold">{variant.label}</span>
+                  <span
+                    className={cn(
+                      "mt-0.5 block text-xs tabular-nums",
+                      index === variantIndex ? "text-white/75" : "text-ink-400",
+                    )}
+                  >
+                    {soldOut ? "изчерпан" : formatPrice(variantPrice).eur}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </fieldset>
       )}

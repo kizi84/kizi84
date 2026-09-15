@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { Loader2, PawPrint } from "lucide-react";
+import { FIELD_INPUT, FIELD_LABEL } from "@/lib/form-styles";
 
 function Form() {
   const router = useRouter();
@@ -53,7 +54,7 @@ function Form() {
 
       <form onSubmit={onSubmit} className="rounded-2xl border border-ink-100 bg-white p-6 shadow-soft">
         <div>
-          <label htmlFor="email" className="block text-sm font-semibold text-ink-800">Имейл</label>
+          <label htmlFor="email" className={FIELD_LABEL}>Имейл</label>
           <input
             id="email"
             name="email"
@@ -61,19 +62,19 @@ function Form() {
             required
             autoComplete="username"
             autoFocus
-            className="mt-1.5 w-full rounded-xl border border-ink-200 bg-cream px-4 py-2.5 text-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-100 focus:outline-none"
+            className={FIELD_INPUT}
           />
         </div>
 
         <div className="mt-4">
-          <label htmlFor="password" className="block text-sm font-semibold text-ink-800">Парола</label>
+          <label htmlFor="password" className={FIELD_LABEL}>Парола</label>
           <input
             id="password"
             name="password"
             type="password"
             required
             autoComplete="current-password"
-            className="mt-1.5 w-full rounded-xl border border-ink-200 bg-cream px-4 py-2.5 text-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-100 focus:outline-none"
+            className={FIELD_INPUT}
           />
         </div>
 

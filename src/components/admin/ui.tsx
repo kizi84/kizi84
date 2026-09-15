@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FIELD_HINT, FIELD_INPUT, FIELD_LABEL } from "@/lib/form-styles";
 import { cn } from "@/lib/utils";
 
 export function PageHeader({
@@ -90,7 +91,7 @@ export function Field({
 }) {
   return (
     <div>
-      <label htmlFor={name} className="block text-sm font-semibold text-ink-800">
+      <label htmlFor={name} className={FIELD_LABEL}>
         {label}
       </label>
       <input
@@ -102,9 +103,9 @@ export function Field({
         required={required}
         placeholder={placeholder}
         defaultValue={defaultValue ?? undefined}
-        className="mt-1.5 w-full rounded-xl border border-ink-200 bg-cream px-4 py-2.5 text-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-100 focus:outline-none"
+        className={FIELD_INPUT}
       />
-      {hint && <p className="mt-1 text-xs text-ink-400">{hint}</p>}
+      {hint && <p className={FIELD_HINT}>{hint}</p>}
     </div>
   );
 }
@@ -126,7 +127,7 @@ export function TextArea({
 }) {
   return (
     <div>
-      <label htmlFor={name} className="block text-sm font-semibold text-ink-800">
+      <label htmlFor={name} className={FIELD_LABEL}>
         {label}
       </label>
       <textarea
@@ -135,9 +136,9 @@ export function TextArea({
         rows={rows}
         placeholder={placeholder}
         defaultValue={defaultValue ?? undefined}
-        className="mt-1.5 w-full rounded-xl border border-ink-200 bg-cream px-4 py-3 text-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-100 focus:outline-none"
+        className={FIELD_INPUT}
       />
-      {hint && <p className="mt-1 text-xs text-ink-400">{hint}</p>}
+      {hint && <p className={FIELD_HINT}>{hint}</p>}
     </div>
   );
 }
@@ -157,14 +158,14 @@ export function Select({
 }) {
   return (
     <div>
-      <label htmlFor={name} className="block text-sm font-semibold text-ink-800">
+      <label htmlFor={name} className={FIELD_LABEL}>
         {label}
       </label>
       <select
         id={name}
         name={name}
         defaultValue={defaultValue ?? ""}
-        className="mt-1.5 w-full rounded-xl border border-ink-200 bg-cream px-4 py-2.5 text-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-100 focus:outline-none"
+        className={FIELD_INPUT}
       >
         {placeholder && <option value="">{placeholder}</option>}
         {options.map((option) => (
@@ -195,7 +196,7 @@ export function Toggle({
         className="mt-0.5 size-4 rounded border-ink-300 text-brand-600 focus:ring-brand-400"
       />
       <span>
-        <span className="block text-sm font-semibold text-ink-800">{label}</span>
+        <span className={FIELD_LABEL}>{label}</span>
         {hint && <span className="block text-xs text-ink-400">{hint}</span>}
       </span>
     </label>

@@ -137,7 +137,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                 rows={3}
                 defaultValue={order.adminNote ?? ""}
                 placeholder="Видимо само за екипа — напр. номер на товарителница."
-                className="w-full rounded-xl border border-ink-200 bg-cream px-4 py-3 text-sm focus:border-brand-400 focus:outline-none"
+                className="w-full rounded-xl border border-ink-200 bg-cream px-4 py-3 text-[15px] focus:border-brand-400 focus:ring-2 focus:ring-brand-100 focus:outline-none"
               />
               <button
                 type="submit"
@@ -163,7 +163,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                 id="status"
                 name="status"
                 defaultValue={order.status}
-                className="w-full rounded-xl border border-ink-200 bg-cream px-4 py-2.5 text-sm focus:border-brand-400 focus:outline-none"
+                className="w-full rounded-xl border border-ink-200 bg-cream px-4 py-3 text-[15px] focus:border-brand-400 focus:ring-2 focus:ring-brand-100 focus:outline-none"
               >
                 {ORDER_STATUSES.map((item) => (
                   <option key={item.value} value={item.value}>{item.label}</option>

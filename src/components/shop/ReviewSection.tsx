@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Loader2, Star } from "lucide-react";
+import { FIELD_INPUT, FIELD_LABEL } from "@/lib/form-styles";
 import { cn, formatDate } from "@/lib/utils";
 
 type Review = {
@@ -188,7 +189,7 @@ function ReviewForm({ productId, onDone }: { productId: string; onDone: () => vo
       </div>
 
       <div className="mt-4">
-        <label htmlFor="review-body" className="block text-sm font-semibold text-ink-800">
+        <label htmlFor="review-body" className={FIELD_LABEL}>
           Вашият отзив *
         </label>
         <textarea
@@ -198,7 +199,7 @@ function ReviewForm({ productId, onDone }: { productId: string; onDone: () => vo
           rows={4}
           minLength={10}
           placeholder="Споделете опита си с този продукт…"
-          className="mt-1.5 w-full rounded-xl border border-ink-200 bg-cream px-4 py-3 text-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-100 focus:outline-none"
+          className={FIELD_INPUT}
         />
       </div>
 
@@ -223,7 +224,7 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={`review-${name}`} className="block text-sm font-semibold text-ink-800">
+      <label htmlFor={`review-${name}`} className={FIELD_LABEL}>
         {label}
       </label>
       <input
@@ -232,7 +233,7 @@ function Field({
         type={type}
         required={required}
         placeholder={placeholder}
-        className="mt-1.5 w-full rounded-xl border border-ink-200 bg-cream px-4 py-2.5 text-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-100 focus:outline-none"
+        className={FIELD_INPUT}
       />
     </div>
   );

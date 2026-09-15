@@ -41,10 +41,13 @@
 
 ```bash
 npm install
-cp .env.example .env      # и попълнете стойностите
 npm run setup             # създава базата и зарежда началните данни
 npm run dev               # http://localhost:3000
 ```
+
+Това е всичко. `.env` се създава автоматично от `.env.example` при първото
+пускане, с новоизгенериран `AUTH_SECRET` — не е нужно да го копирате ръчно.
+Ако вече имате `.env`, той не се пипа.
 
 Админ панелът е на `http://localhost:3000/admin`
 с данните от `ADMIN_EMAIL` / `ADMIN_PASSWORD` в `.env`.
@@ -65,6 +68,17 @@ npm run dev               # http://localhost:3000
 ---
 
 ## Ако нещо не тръгне
+
+**`Environment variable not found: DATABASE_URL`**
+
+Липсва файлът `.env`. Той нарочно не влиза в git, защото съдържа паролата за
+администратор и ключа за сесиите. `npm install`, `npm run dev`, `npm run build`
+и `npm run setup` го създават сами от `.env.example`; ако искате да го
+направите ръчно:
+
+```bash
+node scripts/ensure-env.mjs
+```
 
 **`@prisma/client did not initialize yet. Please run "prisma generate"`**
 
@@ -90,9 +104,10 @@ npx prisma generate && npx prisma db push
 **Искам да започна с чиста база**
 
 ```bash
-rm prisma/dev.db        # Windows: del prisma\dev.db
-npm run setup
+npm run db:reset
 ```
+
+Изтрива всичко и зарежда началния каталог наново.
 
 ---
 
@@ -152,7 +167,9 @@ Brit Care Adult Medium Lamb & Rice 12кг,82,BGN,Суха храна за куч
 | `npm run setup` | Създаване на базата + начални данни |
 | `npm run db:seed` | Само началните данни |
 | `npm run db:studio` | Визуален редактор на базата |
+| `npm run db:reset` | Изтрива базата и я зарежда наново |
 | `npm run import:legacy` | Сваляне на каталога от стария сайт |
+| `npm run art:products` | Прегенерира илюстрациите на продуктите |
 
 ---
 

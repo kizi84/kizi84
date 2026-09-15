@@ -3,19 +3,29 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { SlidersHorizontal, X } from "lucide-react";
-import { SORT_OPTIONS } from "@/lib/catalog";
+import { SORT_OPTIONS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 type Brand = { id: string; slug: string; name: string };
 
-export function CatalogFilters({
+/**
+ * The catalogue's two-column shell: filter sidebar, result toolbar and results.
+ *
+ * It owns the grid rather than being dropped into one by each page. Returning a
+ * fragment of three siblings into a caller's grid made the toolbar, the sidebar
+ * and the product list fight over the same two tracks, which collapsed the
+ * products into the 16rem filter column.
+ */
+export function CatalogShell({
   brands,
   bounds,
   total,
+  children,
 }: {
   brands: Brand[];
   bounds: { min: number; max: number };
   total: number;
+  children: React.ReactNode;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -99,7 +109,7 @@ export function CatalogFilters({
             onChange={(e) => setMinPrice(e.target.value)}
             placeholder={String(bounds.min)}
             aria-label="Минимална цена"
-            className="w-full rounded-lg border border-ink-200 bg-white px-2.5 py-2 text-sm focus:border-brand-400 focus:outline-none"
+            className="w-full min-w-0 rounded-lg border border-ink-200 bg-white px-2.5 py-2.5 text-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-100 focus:outline-none"
           />
           <span className="text-ink-400" aria-hidden>–</span>
           <input
@@ -111,11 +121,11 @@ export function CatalogFilters({
             onChange={(e) => setMaxPrice(e.target.value)}
             placeholder={String(bounds.max)}
             aria-label="Максимална цена"
-            className="w-full rounded-lg border border-ink-200 bg-white px-2.5 py-2 text-sm focus:border-brand-400 focus:outline-none"
+            className="w-full min-w-0 rounded-lg border border-ink-200 bg-white px-2.5 py-2.5 text-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-100 focus:outline-none"
           />
           <button
             type="submit"
-            className="shrink-0 rounded-lg bg-ink-900 px-3 py-2 text-xs font-semibold text-white hover:bg-ink-800"
+            className="shrink-0 rounded-lg bg-ink-900 px-3 py-2.5 text-xs font-semibold text-white hover:bg-ink-800"
           >
             OK
           </button>
@@ -125,7 +135,7 @@ export function CatalogFilters({
       {brands.length > 0 && (
         <div>
           <h3 className="font-display text-sm font-bold text-ink-900">Марка</h3>
-          <div className="no-scrollbar mt-3 max-h-64 space-y-1.5 overflow-y-auto pr-1">
+          <div className="mt-3 max-h-72 space-y-1.5 overflow-y-auto pr-2">
             {brands.map((brand) => (
               <label
                 key={brand.id}
@@ -158,47 +168,53 @@ export function CatalogFilters({
 
   return (
     <>
-      {/* Toolbar */}
-      <div
-        className={cn(
-          "mb-6 flex flex-wrap items-center justify-between gap-3",
-          isPending && "opacity-60",
-        )}
-      >
-        <p className="text-sm text-ink-500">
-          <strong className="text-ink-900">{total}</strong> продукта
-        </p>
+      <div className="grid gap-8 lg:grid-cols-[16rem_1fr]">
+        {/* Desktop sidebar */}
+        <aside className="hidden lg:block">
+          <div className="sticky top-44 rounded-2xl border border-ink-100 bg-white p-5">{panel}</div>
+        </aside>
 
-        {/* min-w-0 lets the sort select shrink below its longest option on phones. */}
-        <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
-          <button
-            type="button"
-            onClick={() => setMobileOpen(true)}
-            className="flex items-center gap-1.5 rounded-full border border-ink-200 bg-white px-4 py-2 text-sm font-semibold text-ink-700 lg:hidden"
+        <div className="min-w-0">
+          {/* Toolbar */}
+          <div
+            className={cn(
+              "mb-6 flex flex-wrap items-center justify-between gap-3",
+              isPending && "opacity-60",
+            )}
           >
-            <SlidersHorizontal className="size-4" aria-hidden />
-            Филтри
-            {hasFilters && <span className="size-1.5 rounded-full bg-brand-500" aria-hidden />}
-          </button>
+            <p className="text-sm text-ink-500">
+              <strong className="text-ink-900">{total}</strong> продукта
+            </p>
 
-          <label className="sr-only" htmlFor="sort">Подреждане</label>
-          <select
-            id="sort"
-            value={params.get("sort") ?? "popular"}
-            onChange={(e) => apply((next) => next.set("sort", e.target.value))}
-            className="min-w-0 max-w-full truncate rounded-full border border-ink-200 bg-white px-4 py-2 text-sm font-medium text-ink-700 focus:border-brand-400 focus:outline-none"
-          >
-            {SORT_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
-            ))}
-          </select>
+            {/* min-w-0 lets the sort select shrink below its longest option on phones. */}
+            <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setMobileOpen(true)}
+                className="flex items-center gap-1.5 rounded-full border border-ink-200 bg-white px-4 py-2 text-sm font-semibold text-ink-700 lg:hidden"
+              >
+                <SlidersHorizontal className="size-4" aria-hidden />
+                Филтри
+                {hasFilters && <span className="size-1.5 rounded-full bg-brand-500" aria-hidden />}
+              </button>
+
+              <label className="sr-only" htmlFor="sort">Подреждане</label>
+              <select
+                id="sort"
+                value={params.get("sort") ?? "popular"}
+                onChange={(e) => apply((next) => next.set("sort", e.target.value))}
+                className="min-w-0 max-w-full truncate rounded-full border border-ink-200 bg-white px-4 py-2 text-sm font-medium text-ink-700 focus:border-brand-400 focus:outline-none"
+              >
+                {SORT_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className={cn(isPending && "opacity-60 transition-opacity")}>{children}</div>
         </div>
       </div>
-
-      {/* Desktop sidebar */}
-      <aside className="hidden lg:block">
-        <div className="sticky top-44 rounded-2xl border border-ink-100 bg-white p-5">{panel}</div>
-      </aside>
 
       {/* Mobile sheet */}
       <div

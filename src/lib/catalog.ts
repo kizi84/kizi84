@@ -2,6 +2,8 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { PRODUCT_CARD_SELECT } from "@/lib/queries";
 
+export { SORT_OPTIONS } from "@/lib/constants";
+
 export const PAGE_SIZE = 12;
 
 export type CatalogSearchParams = {
@@ -13,15 +15,6 @@ export type CatalogSearchParams = {
   page?: string;
   stock?: string;
 };
-
-export const SORT_OPTIONS = [
-  { value: "popular", label: "Най-популярни" },
-  { value: "new", label: "Най-нови" },
-  { value: "price-asc", label: "Цена: ниска → висока" },
-  { value: "price-desc", label: "Цена: висока → ниска" },
-  { value: "rating", label: "Най-високо оценени" },
-  { value: "name", label: "Име (А–Я)" },
-] as const;
 
 function orderBy(sort: string | undefined): Prisma.ProductOrderByWithRelationInput[] {
   switch (sort) {

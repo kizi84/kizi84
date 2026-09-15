@@ -17,7 +17,7 @@ export function ProductGallery({ images, name }: { images: string[]; name: strin
   }
 
   return (
-    <div className="flex flex-col-reverse gap-3 sm:flex-row">
+    <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-start">
       {images.length > 1 && (
         <ul className="no-scrollbar flex gap-2.5 overflow-x-auto sm:max-h-[32rem] sm:flex-col sm:overflow-y-auto">
           {images.map((src, index) => (
@@ -42,7 +42,7 @@ export function ProductGallery({ images, name }: { images: string[]; name: strin
       )}
 
       <div
-        className="relative aspect-square flex-1 overflow-hidden rounded-2xl border border-ink-100 bg-white"
+        className="relative aspect-square w-full overflow-hidden rounded-2xl border border-ink-100 bg-white sm:flex-1"
         onMouseEnter={() => setZoom(true)}
         onMouseLeave={() => setZoom(false)}
       >

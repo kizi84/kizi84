@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  ChevronDown, Menu, Phone, Search, ShoppingBag, X, PawPrint,
+  ChevronDown, LayoutGrid, Menu, Phone, Search, ShoppingBag, X, PawPrint,
 } from "lucide-react";
 import { useCart } from "@/components/CartProvider";
 import { SITE } from "@/lib/constants";
@@ -18,6 +17,9 @@ export type NavCategory = {
   icon: string | null;
   children: { id: string; slug: string; name: string }[];
 };
+
+/** Sentinel id for the "all categories" panel, which is not a real category. */
+const ALL_MENU = "__all__";
 
 export function Header({ categories }: { categories: NavCategory[] }) {
   const { count, openCart } = useCart();
@@ -148,20 +150,26 @@ export function Header({ categories }: { categories: NavCategory[] }) {
           </div>
         </div>
 
-        {/* Desktop category bar */}
+        {/* Desktop category bar.
+            Ten top categories do not fit on a 1024px screen, so the row shows
+            as many as the width allows and "Всички категории" always carries
+            the complete tree — nothing is only reachable at one breakpoint. */}
         <nav className="container-page hidden border-t border-ink-100 lg:block" aria-label="Категории">
-          <ul className="flex items-stretch gap-1">
-            {categories.map((cat) => (
+          <ul className="flex items-stretch gap-0.5">
+            {categories.slice(0, 5).map((cat, index) => (
               <li
                 key={cat.id}
-                className="relative"
+                className={cn(
+                  "relative shrink-0",
+                  index === 4 && "hidden xl:block",
+                )}
                 onMouseEnter={() => { cancelClose(); setOpenMenu(cat.id); }}
                 onMouseLeave={scheduleClose}
               >
                 <Link
                   href={`/katalog/${cat.slug}`}
                   className={cn(
-                    "flex items-center gap-1.5 px-3 py-3 text-sm font-medium text-ink-700 transition-colors hover:text-brand-700",
+                    "flex items-center gap-1.5 whitespace-nowrap px-2.5 py-3 text-[13px] font-medium text-ink-700 transition-colors hover:text-brand-700 xl:text-sm",
                     openMenu === cat.id && "text-brand-700",
                   )}
                   aria-expanded={cat.children.length > 0 ? openMenu === cat.id : undefined}
@@ -179,7 +187,9 @@ export function Header({ categories }: { categories: NavCategory[] }) {
                 {cat.children.length > 0 && (
                   <div
                     className={cn(
-                      "absolute top-full left-0 z-50 w-64 origin-top rounded-2xl border border-ink-100 bg-white p-2 shadow-lift transition-all duration-200",
+                      "absolute top-full z-50 w-64 origin-top rounded-2xl border border-ink-100 bg-white p-2 shadow-lift transition-all duration-200",
+                      // The last item opens leftwards so the panel never runs off screen.
+                      index >= 3 ? "right-0" : "left-0",
                       openMenu === cat.id
                         ? "visible translate-y-0 opacity-100"
                         : "invisible -translate-y-1 opacity-0",
@@ -200,10 +210,72 @@ export function Header({ categories }: { categories: NavCategory[] }) {
                 )}
               </li>
             ))}
-            <li className="ml-auto">
+
+            <li
+              className="relative shrink-0"
+              onMouseEnter={() => { cancelClose(); setOpenMenu(ALL_MENU); }}
+              onMouseLeave={scheduleClose}
+            >
+              <Link
+                href="/katalog"
+                className={cn(
+                  "flex items-center gap-1.5 whitespace-nowrap px-2.5 py-3 text-[13px] font-medium text-ink-700 transition-colors hover:text-brand-700 xl:text-sm",
+                  openMenu === ALL_MENU && "text-brand-700",
+                )}
+                aria-expanded={openMenu === ALL_MENU}
+              >
+                <LayoutGrid className="size-3.5" aria-hidden />
+                Всички категории
+                <ChevronDown
+                  className={cn("size-3.5 transition-transform duration-200", openMenu === ALL_MENU && "rotate-180")}
+                  aria-hidden
+                />
+              </Link>
+
+              <div
+                className={cn(
+                  "absolute top-full right-0 z-50 w-[min(52rem,calc(100vw-4rem))] origin-top rounded-2xl border border-ink-100 bg-white p-5 shadow-lift transition-all duration-200",
+                  openMenu === ALL_MENU
+                    ? "visible translate-y-0 opacity-100"
+                    : "invisible -translate-y-1 opacity-0",
+                )}
+                onMouseEnter={cancelClose}
+                onMouseLeave={scheduleClose}
+              >
+                <div className="grid grid-cols-3 gap-x-6 gap-y-5">
+                  {categories.map((cat) => (
+                    <div key={cat.id}>
+                      <Link
+                        href={`/katalog/${cat.slug}`}
+                        className="flex items-center gap-1.5 text-sm font-bold text-ink-900 transition-colors hover:text-brand-700"
+                      >
+                        {cat.icon && <span aria-hidden>{cat.icon}</span>}
+                        {cat.name}
+                      </Link>
+                      {cat.children.length > 0 && (
+                        <ul className="mt-1.5 space-y-0.5">
+                          {cat.children.map((child) => (
+                            <li key={child.id}>
+                              <Link
+                                href={`/katalog/${child.slug}`}
+                                className="block rounded-lg px-2 py-1 -mx-2 text-[13px] text-ink-600 transition-colors hover:bg-brand-50 hover:text-brand-700"
+                              >
+                                {child.name}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </li>
+
+            <li className="ml-auto shrink-0">
               <Link
                 href="/promocii"
-                className="flex items-center gap-1.5 px-3 py-3 text-sm font-semibold text-amber-brand-600 transition-colors hover:text-amber-brand-700"
+                className="flex items-center gap-1.5 whitespace-nowrap px-2.5 py-3 text-[13px] font-semibold text-amber-brand-600 transition-colors hover:text-amber-brand-700 xl:text-sm"
               >
                 🔥 Промоции
               </Link>

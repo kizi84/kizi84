@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CheckCircle2, Loader2 } from "lucide-react";
+import { FIELD_INPUT, FIELD_LABEL } from "@/lib/form-styles";
 
 export function ContactForm() {
   const [state, setState] = useState<"idle" | "loading" | "done" | "error">("idle");
@@ -58,7 +59,7 @@ export function ContactForm() {
       </div>
 
       <div className="mt-4">
-        <label htmlFor="contact-body" className="block text-sm font-semibold text-ink-800">
+        <label htmlFor="contact-body" className={FIELD_LABEL}>
           Съобщение *
         </label>
         <textarea
@@ -68,7 +69,7 @@ export function ContactForm() {
           rows={5}
           minLength={10}
           placeholder="Опишете въпроса си…"
-          className="mt-1.5 w-full rounded-xl border border-ink-200 bg-cream px-4 py-3 text-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-100 focus:outline-none"
+          className={FIELD_INPUT}
         />
       </div>
 
@@ -98,7 +99,7 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={`contact-${name}`} className="block text-sm font-semibold text-ink-800">
+      <label htmlFor={`contact-${name}`} className={FIELD_LABEL}>
         {label}
       </label>
       <input
@@ -108,7 +109,7 @@ function Field({
         required={required}
         placeholder={placeholder}
         autoComplete={autoComplete}
-        className="mt-1.5 w-full rounded-xl border border-ink-200 bg-cream px-4 py-2.5 text-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-100 focus:outline-none"
+        className={FIELD_INPUT}
       />
     </div>
   );

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Breadcrumbs, type Crumb } from "@/components/shop/Breadcrumbs";
-import { CatalogFilters } from "@/components/shop/CatalogFilters";
+import { CatalogShell } from "@/components/shop/CatalogShell";
 import { ProductGrid } from "@/components/shop/ProductGrid";
 import { Pagination } from "@/components/shop/Pagination";
 import { EmptyState } from "@/components/shop/EmptyState";
@@ -101,30 +101,26 @@ export default async function CategoryPage({
         )}
       </header>
 
-      <div className="grid gap-8 lg:grid-cols-[16rem_1fr]">
-        <CatalogFilters brands={brands} bounds={bounds} total={total} />
-
-        <div>
-          {products.length === 0 ? (
-            <EmptyState
-              title="Няма продукти в тази категория"
-              description="Скоро добавяме нови артикули. Разгледайте останалата част от каталога."
-              actionHref="/katalog"
-              actionLabel="Към каталога"
+      <CatalogShell brands={brands} bounds={bounds} total={total}>
+        {products.length === 0 ? (
+          <EmptyState
+            title="Няма продукти в тази категория"
+            description="Скоро добавяме нови артикули. Разгледайте останалата част от каталога."
+            actionHref="/katalog"
+            actionLabel="Към каталога"
+          />
+        ) : (
+          <>
+            <ProductGrid products={products} priorityCount={4} />
+            <Pagination
+              page={page}
+              pageCount={pageCount}
+              basePath={`/katalog/${category.slug}`}
+              searchParams={search}
             />
-          ) : (
-            <>
-              <ProductGrid products={products} priorityCount={4} />
-              <Pagination
-                page={page}
-                pageCount={pageCount}
-                basePath={`/katalog/${category.slug}`}
-                searchParams={search}
-              />
-            </>
-          )}
-        </div>
-      </div>
+          </>
+        )}
+      </CatalogShell>
     </div>
   );
 }

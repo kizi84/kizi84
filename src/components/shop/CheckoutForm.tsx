@@ -7,6 +7,7 @@ import { useMemo, useState } from "react";
 import { Loader2, ShieldCheck } from "lucide-react";
 import { useCart } from "@/components/CartProvider";
 import { DELIVERY_METHODS, PAYMENT_METHODS, SHIPPING } from "@/lib/constants";
+import { FIELD_INPUT, FIELD_LABEL } from "@/lib/form-styles";
 import { cn, formatPrice } from "@/lib/utils";
 
 export function CheckoutForm() {
@@ -95,7 +96,7 @@ export function CheckoutForm() {
   return (
     <form onSubmit={onSubmit} className="grid gap-8 lg:grid-cols-[1fr_22rem]">
       <div className="space-y-6">
-        <fieldset className="rounded-2xl border border-ink-100 bg-white p-5 lg:p-6">
+        <fieldset className="rounded-2xl border border-ink-100 bg-white p-5 lg:p-7">
           <legend className="px-2 font-display text-lg font-bold text-ink-900">Данни за контакт</legend>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field name="customerName" label="Име и фамилия *" required placeholder="Иван Петров" autoComplete="name" />
@@ -106,7 +107,7 @@ export function CheckoutForm() {
           </div>
         </fieldset>
 
-        <fieldset className="rounded-2xl border border-ink-100 bg-white p-5 lg:p-6">
+        <fieldset className="rounded-2xl border border-ink-100 bg-white p-5 lg:p-7">
           <legend className="px-2 font-display text-lg font-bold text-ink-900">Доставка</legend>
 
           <div className="space-y-2.5">
@@ -159,7 +160,7 @@ export function CheckoutForm() {
           </div>
         </fieldset>
 
-        <fieldset className="rounded-2xl border border-ink-100 bg-white p-5 lg:p-6">
+        <fieldset className="rounded-2xl border border-ink-100 bg-white p-5 lg:p-7">
           <legend className="px-2 font-display text-lg font-bold text-ink-900">Плащане</legend>
           <div className="space-y-2.5">
             {PAYMENT_METHODS.map((method) => (
@@ -186,7 +187,7 @@ export function CheckoutForm() {
           </div>
 
           <div className="mt-5">
-            <label htmlFor="note" className="block text-sm font-semibold text-ink-800">
+            <label htmlFor="note" className={FIELD_LABEL}>
               Бележка към поръчката
             </label>
             <textarea
@@ -194,7 +195,7 @@ export function CheckoutForm() {
               name="note"
               rows={3}
               placeholder="Допълнителна информация за куриера или екипа ни…"
-              className="mt-1.5 w-full rounded-xl border border-ink-200 bg-cream px-4 py-3 text-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-100 focus:outline-none"
+              className={FIELD_INPUT}
             />
           </div>
         </fieldset>
@@ -280,7 +281,7 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={name} className="block text-sm font-semibold text-ink-800">{label}</label>
+      <label htmlFor={name} className={FIELD_LABEL}>{label}</label>
       <input
         id={name}
         name={name}
@@ -288,7 +289,7 @@ function Field({
         required={required}
         placeholder={placeholder}
         autoComplete={autoComplete}
-        className="mt-1.5 w-full rounded-xl border border-ink-200 bg-cream px-4 py-2.5 text-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-100 focus:outline-none"
+        className={FIELD_INPUT}
       />
     </div>
   );

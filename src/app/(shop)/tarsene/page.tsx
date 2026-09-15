@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/shop/Breadcrumbs";
-import { CatalogFilters } from "@/components/shop/CatalogFilters";
+import { CatalogShell } from "@/components/shop/CatalogShell";
 import { ProductGrid } from "@/components/shop/ProductGrid";
 import { Pagination } from "@/components/shop/Pagination";
 import { EmptyState } from "@/components/shop/EmptyState";
@@ -48,25 +48,21 @@ export default async function SearchPage({
           actionLabel="Разгледай каталога"
         />
       ) : (
-        <div className="grid gap-8 lg:grid-cols-[16rem_1fr]">
-          <CatalogFilters brands={brands} bounds={bounds} total={total} />
-
-          <div>
-            {products.length === 0 ? (
-              <EmptyState
-                title="Няма намерени резултати"
-                description={`Не открихме продукти за „${query}“. Опитайте с друга дума или разгледайте каталога.`}
-                actionHref="/katalog"
-                actionLabel="Към каталога"
-              />
-            ) : (
-              <>
-                <ProductGrid products={products} priorityCount={4} />
-                <Pagination page={page} pageCount={pageCount} basePath="/tarsene" searchParams={params} />
-              </>
-            )}
-          </div>
-        </div>
+        <CatalogShell brands={brands} bounds={bounds} total={total}>
+          {products.length === 0 ? (
+            <EmptyState
+              title="Няма намерени резултати"
+              description={`Не открихме продукти за „${query}“. Опитайте с друга дума или разгледайте каталога.`}
+              actionHref="/katalog"
+              actionLabel="Към каталога"
+            />
+          ) : (
+            <>
+              <ProductGrid products={products} priorityCount={4} />
+              <Pagination page={page} pageCount={pageCount} basePath="/tarsene" searchParams={params} />
+            </>
+          )}
+        </CatalogShell>
       )}
     </div>
   );
