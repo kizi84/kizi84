@@ -64,6 +64,38 @@ npm run dev               # http://localhost:3000
 
 ---
 
+## Ако нещо не тръгне
+
+**`@prisma/client did not initialize yet. Please run "prisma generate"`**
+
+Липсва генерираният Prisma клиент. Нормално това не се случва — `npm install`
+и `npm run dev` го генерират сами — но ако все пак се появи:
+
+```bash
+npx prisma generate
+```
+
+**Портът 3000 е зает**
+
+```bash
+npm run dev -- -p 3001
+```
+
+**Страниците дават 500 след промяна в `prisma/schema.prisma`**
+
+```bash
+npx prisma generate && npx prisma db push
+```
+
+**Искам да започна с чиста база**
+
+```bash
+rm prisma/dev.db        # Windows: del prisma\dev.db
+npm run setup
+```
+
+---
+
 ## Прехвърляне на продуктите от стария сайт
 
 Каталогът от **uzunov90.com** се мигрира на две стъпки.
